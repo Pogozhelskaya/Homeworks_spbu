@@ -53,8 +53,11 @@ fun dijkstra(adjacencyMatrix: Array<IntArray>, N: Int, K: Int) {
             }
         }
     }
-    for( length in lengths) {
-        println(length)
+    for(i in 0..N - 1) {
+        if(lengths[i] == Int.MAX_VALUE)
+            println("There's no way from vertex number $K to vertex number ${i + 1}")
+        else
+            println("From $K to ${i + 1}: ${lengths[i]}")
     }
 }
 
@@ -69,6 +72,7 @@ fun main(args : Array<String>) {
         println()
     }
     statistic(adjacencyMatrix, N, M)
+    println("Please, enter K:")
     val K = readLine()!!.toInt()
     dijkstra(adjacencyMatrix, N, K - 1)
 }
