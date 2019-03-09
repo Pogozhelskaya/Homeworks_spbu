@@ -37,23 +37,23 @@ fun dijkstra(adjacencyMatrix: Array<IntArray>, N: Int, K: Int) : Array<Int> {
     val distances: Array<Int> = Array(N) { Int.MAX_VALUE }
     val used : Array<Boolean> = Array(N) { false }
     distances[K] = 0
-    for (i in 0..(N - 1)) {
+    for(i in 0 until N) {
         var v = -1
-        for (j in 0..(N - 1)) {
-            if (used[j] == false && (v == -1 || distances[j] < distances[v])) {
+        for(j in 0 until N) {
+            if (!used[j] && (v == -1 || distances[j] < distances[v])) {
                 v = j
             }
         }
         if (distances[v] == Int.MAX_VALUE) break
         used[v] = true
-        for (j in 0..(N - 1)) {
+        for(j in 0 until N) {
             if (adjacencyMatrix[v][j] == 0) continue
             if (distances[v] + adjacencyMatrix[v][j] < distances[j]) {
                 distances[j] = distances[v] + adjacencyMatrix[v][j]
             }
         }
     }
-    for(i in 0..N - 1) {
+    for(i in 0 until N) {
         if(distances[i] == Int.MAX_VALUE)
             println("There's no way from vertex number ${K + 1} to vertex number ${i + 1}")
         else
@@ -65,14 +65,13 @@ fun dijkstra(adjacencyMatrix: Array<IntArray>, N: Int, K: Int) : Array<Int> {
 fun fordBellman(adjacencyMatrix: Array<IntArray>, N: Int, K: Int) : Array<Int> {
     data class Edge(val from: Int, val to: Int, val weight: Int)
     var edges: Array<Edge> = emptyArray()
-    for(i in 0..(N - 1)) {
-        for (j in i..(N - 1)) {
-           // val edge = Edge(i, j, adjacencyMatrix[i][j])
+    for(i in 0 until N) {
+        for(j in 0 until N) {
             edges = edges.plus(Edge(i, j, adjacencyMatrix[i][j]))
             edges = edges.plus(Edge(j, i, adjacencyMatrix[i][j]))
         }
     }
-    val distances : Array<Int> = Array(N, { Int.MAX_VALUE })
+    val distances : Array<Int> = Array(N) { Int.MAX_VALUE }
     distances[K] = 0
     while(true) {
         var any = false
@@ -86,7 +85,7 @@ fun fordBellman(adjacencyMatrix: Array<IntArray>, N: Int, K: Int) : Array<Int> {
         }
         if(!any) break
     }
-    for(i in 0..N - 1) {
+    for(i in 0 until N) {
         if(distances[i] == Int.MAX_VALUE)
             println("There's no way from vertex number ${K + 1} to vertex number ${i + 1}")
         else
@@ -95,10 +94,29 @@ fun fordBellman(adjacencyMatrix: Array<IntArray>, N: Int, K: Int) : Array<Int> {
     return distances
 }
 
+fun check(adjacencyMatrix: Array<IntArray>, N : Int, K: Int) {
+    val fordBellmanArray : Array<Int> = fordBellman(adjacencyMatrix, N, K)
+    val dijkstraArray : Array<Int> = dijkstra(adjacencyMatrix, N, K)
+    var correct = true
+    if (dijkstraArray.size != fordBellmanArray.size) {
+        println("Algorithms are incorrect")
+        correct = false
+    } else {
+        for (i in 0 until dijkstraArray.size) {
+            if (dijkstraArray[i] != fordBellmanArray[i]) {
+                println("Algorithms are incorrect")
+                correct = false
+                break
+            }
+        }
+    }
+    if(correct) {
+        println("Algorithms are correct")
+    }
+}
+
 fun main(args : Array<String>) {
     val (N, M) = readLine()!!.split(' ').map(String::toInt)
-    val fordBellmanArray : Array<Int>
-    val dijkstraArray : Array<Int>
     val adjacencyMatrix : Array<IntArray> = build(N, M)
     for (row in adjacencyMatrix) {
         for (element in row) {
@@ -108,18 +126,7 @@ fun main(args : Array<String>) {
         println()
     }
     statistic(adjacencyMatrix, N, M)
-    println("Please, enter K:")
-    val K = readLine()!!.toInt()
-    dijkstraArray = dijkstra(adjacencyMatrix, N, K - 1)
-    fordBellmanArray = fordBellman(adjacencyMatrix, N, K - 1)
-    if (dijkstraArray.size != fordBellmanArray.size) {
-        println("Algorithms are incorrect 1")
-    } else {
-        for (i in 0..(dijkstraArray.size - 1)) {
-            if (dijkstraArray[i] != fordBellmanArray[i]) {
-                println("Algorithms are incorrect 2")
-                break
-            }
-        }
-    }
+    println("Please, enter the number of vertex to find all distances from:")
+    val k = readLine()!!.toInt()
+    check(adjacencyMatrix, N, k - 1)
 }
