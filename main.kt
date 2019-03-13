@@ -115,7 +115,7 @@ fun check(adjacencyMatrix: Array<IntArray>, N : Int, K: Int) {
     }
 }
 
-fun main(args : Array<String>) {
+fun main() {
     val (N, M) = readLine()!!.split(' ').map(String::toInt)
     val adjacencyMatrix : Array<IntArray> = build(N, M)
     for (row in adjacencyMatrix) {
